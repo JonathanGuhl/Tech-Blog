@@ -22,7 +22,6 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
       const dbComments = await Comments.findByPk(req.params.id, {
-        attributes: { exclude: ['password'] },
         include: [
             { model: Post }, 
             { model: User,
@@ -60,7 +59,26 @@ router.post('/', withAuth, async (req, res) => {
     }
 });
 
-
+router.put('/:id', withAuth, async (req, res) => {
+    try {
+      const dbUpdateComment = await Comments.update({
+        comment_content: req.body.comment_content
+      },
+      {
+        where: {
+          id: req.params.id
+        }
+      });
+      if (!dbUpdateComment) {
+        res.status(404).json('No post found with this id');
+        return;
+      }
+      res.json(dbUpdateComment);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json(err);
+    }
+  });
 
 router.delete('/:id', withAuth, async (req, res) => {
     try {
@@ -80,7 +98,7 @@ router.delete('/:id', withAuth, async (req, res) => {
       console.log(err);
       res.status(500).json(err);
     }
-  });
+});
   
 
 module.exports = router;
