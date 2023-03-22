@@ -107,7 +107,7 @@ router.put('/:id', withAuth, async (req, res) => {
           return;
         }
         
-        await userPk.update(req.body); 
+        await userPk.update(req.body.content); 
         
         const updatedUser = await User.findByPk(req.params.id, {
             attributes: { exclude: ['password'] },
